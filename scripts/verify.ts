@@ -24,6 +24,7 @@ const commands = [
 	['bun', ['run', 'lint']],
 	['bun', ['run', 'format:check']],
 	['bun', ['test', '--run', '--project', 'server']],
+	['bunx', ['vitest', '--run', '--project', 'client', '--pool=threads', '--testTimeout=30000']],
 	['bun', ['run', 'build']],
 ] as const
 
