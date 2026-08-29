@@ -89,7 +89,7 @@
 							</span>
 							<div>
 								<p class="text-sm font-medium">API health</p>
-								<p class="text-xs text-muted-foreground">GET /health · Elysia</p>
+								<p class="text-xs text-muted-foreground">GET /api/health · Elysia</p>
 							</div>
 						</div>
 						<div class="text-right">

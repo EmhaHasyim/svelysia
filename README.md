@@ -37,7 +37,7 @@ Untuk membuka browser otomatis:
 bun run dev -- --open
 ```
 
-Halaman utama menjelaskan tujuan template dan menyediakan contoh interaksi minimal dengan endpoint `GET /health` dari Elysia.
+Halaman utama menjelaskan tujuan template dan menyediakan contoh interaksi minimal dengan endpoint `GET /api/health` dari Elysia.
 
 ## Build dan preview
 
@@ -79,7 +79,7 @@ Setelah menyalin atau membuat repository dari template ini:
 
 1. Ubah metadata project di `package.json`.
 2. Ganti halaman utama di `src/routes/+page.svelte`.
-3. Tambahkan domain API baru di `src/lib/server/api/modules`.
+3. Tambahkan domain API baru di `src/lib/server/api/modules`; semua endpoint API diekspos di bawah prefix `/api`.
 4. Pertahankan `App = typeof app` agar Eden Treaty tetap type-safe.
 5. Tambahkan komponen shadcn-svelte hanya saat benar-benar dibutuhkan:
    ```sh

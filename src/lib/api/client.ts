@@ -8,4 +8,4 @@ import type { App } from '$lib/server/api'
  */
 const origin = typeof location === 'undefined' ? 'http://localhost:5173' : location.origin
 
-export const api = treaty<App>(origin)
+export const api = treaty<App>(`${origin}/api`)

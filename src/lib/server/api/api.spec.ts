@@ -4,7 +4,7 @@ import { app } from './index'
 
 const client = treaty(app)
 
-describe('GET /health', () => {
+describe('GET /api/health', () => {
 	test('returns ok', async () => {
 		const { data, error } = await client.health.get()
 
