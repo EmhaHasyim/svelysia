@@ -1,0 +1,74 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"env": {
+		"browser": true,
+		"es2022": true,
+		"node": true,
+		"worker": true
+	},
+	"globals": {
+		"Env": "readonly",
+		"ExecutionContext": "readonly",
+		"IncomingRequestCfProperties": "readonly"
+	},
+	"plugins": ["typescript", "import", "unicorn", "vitest"],
+	"overrides": [
+		{
+			"files": ["**/*.{test,spec}.{js,ts,jsx,tsx}", "**/*.svelte.{test,spec}.{js,ts}"],
+			"env": { "vitest": true },
+			"rules": {
+				"vitest/consistent-test-filename": "off",
+				"vitest/consistent-test-it": "off",
+				"vitest/no-importing-vitest-globals": "off",
+				"vitest/prefer-describe-function-title": "off",
+				"vitest/prefer-expect-assertions": "off",
+				"vitest/prefer-lowercase-title": "off",
+				"vitest/require-hook": "off"
+			}
+		},
+		{
+			"files": ["**/*.svelte"],
+			"rules": {
+				"import/no-unassigned-import": "off"
+			}
+		},
+		{
+			"files": ["src/app.d.ts", "src/lib/index.ts"],
+			"rules": {
+				"unicorn/require-module-specifiers": "off",
+				"unicorn/no-empty-file": "off"
+			}
+		}
+	],
+	"categories": {
+		"correctness": "deny",
+		"suspicious": "deny"
+	},
+	"rules": {
+		"eslint/capitalized-comments": "off",
+		"eslint/curly": "off",
+		"eslint/func-style": "off",
+		"eslint/id-length": "off",
+		"eslint/max-statements": "off",
+		"eslint/no-magic-numbers": "off",
+		"eslint/no-ternary": "off",
+		"eslint/one-var": "off",
+		"eslint/prefer-template": "off",
+		"eslint/sort-imports": "off",
+		"eslint/sort-keys": "off",
+		"import/consistent-type-specifier-style": "off",
+		"import/group-exports": "off",
+		"import/no-named-export": "off",
+		"import/prefer-default-export": "off",
+		"unicorn/filename-case": "off"
+	},
+	"ignorePatterns": [
+		"node_modules/**",
+		".svelte-kit/**",
+		".wrangler/**",
+		"build/**",
+		"coverage/**",
+		"dist/**",
+		"static/**"
+	]
+}
