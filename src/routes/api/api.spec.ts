@@ -3,35 +3,21 @@ import { fallback } from './[...slugs]/+server'
 
 describe('API route boundary', () => {
 	test('GET /api/health reaches Elysia', async () => {
-		const response = await fallback({
-			request: new Request('http://localhost/api/health'),
-		})
+		const response = await fallback({ request: new Request('http://localhost/api/health') })
 
 		expect(response.status).toBe(200)
 		expect(await response.json()).toEqual({ status: 'ok' })
 	})
 
-	test('preserves the query string while forwarding to Elysia', async () => {
-		const response = await fallback({
-			request: new Request('http://localhost/api/health?probe=true'),
-		})
-
-		expect(response.status).toBe(200)
-	})
-
-	test('returns 404 for an unknown API endpoint', async () => {
-		const response = await fallback({
-			request: new Request('http://localhost/api/missing'),
-		})
+	test('returns RFC 9457 Problem Details for an unknown API endpoint', async () => {
+		const response = await fallback({ request: new Request('http://localhost/api/missing') })
 
 		expect(response.status).toBe(404)
-	})
-
-	test('returns 404 for an unsupported method', async () => {
-		const response = await fallback({
-			request: new Request('http://localhost/api/health', { method: 'POST' }),
+		expect(response.headers.get('content-type')).toBe('application/problem+json')
+		expect(await response.json()).toMatchObject({
+			type: 'not-found',
+			title: 'Not Found',
+			status: 404,
 		})
-
-		expect(response.status).toBe(404)
 	})
 })

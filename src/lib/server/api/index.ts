@@ -1,7 +1,12 @@
-import { Elysia } from 'elysia'
-import { health } from './modules/health'
+import { Elysia, t } from 'elysia'
 
-/** Main Elysia API mounted under /api by the SvelteKit API boundary route. */
-export const app = new Elysia({ name: 'api' }).use(health)
+/** API mounted under /api by the SvelteKit boundary route. Add routes here. */
+export const app = new Elysia({ name: 'api' }).get(
+	'/health',
+	{
+		response: t.Object({ status: t.Literal('ok') }),
+	},
+	() => ({ status: 'ok' as const }),
+)
 
 export type App = typeof app

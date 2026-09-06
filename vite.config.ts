@@ -1,47 +1,31 @@
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vitest/config'
-import { playwright } from '@vitest/browser-playwright'
 import adapter from '@sveltejs/adapter-cloudflare'
 import { sveltekit } from '@sveltejs/kit/vite'
+import { aot } from 'elysia/plugin/aot/vite'
+
+const aotPlugin = aot('src/lib/server/api/index.ts', { target: 'workerd' })
+
+// Elysia AOT precompiles handlers + schemas at build time (workerd forbids
+// `new Function`). Needs Bun (`bunx --bun vite build`). Skipped for the
+// client build, which never imports the server API.
+const elysiaAot = {
+	...aotPlugin,
+	buildStart(this: { environment: { name: string } }) {
+		if (this.environment.name === 'client') return
+		return aotPlugin.buildStart()
+	},
+	buildEnd(this: { environment: { name: string } }) {
+		if (this.environment.name === 'client') return
+		return aotPlugin.buildEnd()
+	},
+}
 
 export default defineConfig({
-	plugins: [
-		tailwindcss(),
-		sveltekit({
-			compilerOptions: {
-				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
-				runes: ({ filename }) =>
-					filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
-			},
-			adapter: adapter(),
-		}),
-	],
+	plugins: [tailwindcss(), sveltekit({ adapter: adapter() }), elysiaAot],
 	test: {
 		expect: { requireAssertions: true },
-		projects: [
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'client',
-					browser: {
-						enabled: true,
-						provider: playwright(),
-						instances: [{ browser: 'chromium', headless: true }],
-					},
-					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**'],
-				},
-			},
-
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'server',
-					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-				},
-			},
-		],
+		environment: 'node',
+		include: ['src/**/*.{test,spec}.{js,ts}'],
 	},
 })

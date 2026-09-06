@@ -33,7 +33,7 @@
 			}
 		},
 		{
-			"files": ["src/app.d.ts", "src/lib/index.ts"],
+			"files": ["src/app.d.ts"],
 			"rules": {
 				"unicorn/require-module-specifiers": "off",
 				"unicorn/no-empty-file": "off"
