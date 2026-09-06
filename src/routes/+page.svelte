@@ -84,10 +84,7 @@
 			aria-label="Navigasi utama"
 		>
 			<a class="flex items-center gap-2 font-semibold tracking-tight" href="#top">
-				<span
-					class="grid size-7 place-items-center rounded-md bg-primary text-sm font-bold text-primary-foreground"
-					>S</span
-				>
+				<img src="/icon-192.png" alt="Logo Svelysia" width="28" height="28" class="size-7 rounded-md" />
 				Svelysia
 			</a>
 			<div class="flex items-center gap-3 text-sm text-muted-foreground sm:gap-6">
@@ -313,10 +310,7 @@ data.<span class="tok-fn">status</span> <span class="tok-cm">// tipe literal 'ok
 			<div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
 				<div class="max-w-xs">
 					<a href="#top" class="flex items-center gap-2 font-semibold tracking-tight text-foreground">
-						<span
-							class="grid size-7 place-items-center rounded-md bg-primary text-sm font-bold text-primary-foreground"
-							>S</span
-						>
+						<img src="/icon-192.png" alt="Logo Svelysia" width="28" height="28" class="size-7 rounded-md" />
 						Svelysia
 					</a>
 					<p class="mt-3 text-sm leading-6 text-muted-foreground">
