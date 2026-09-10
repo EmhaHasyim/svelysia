@@ -13,15 +13,5 @@
 		"moduleResolution": "bundler",
 		"types": ["./worker-configuration.d.ts"]
 	},
-	"exclude": [
-		"./node_modules/**",
-		"./src/service-worker.js",
-		"./src/service-worker/**/*.js",
-		"./src/service-worker.ts",
-		"./src/service-worker/**/*.ts",
-		"./src/service-worker.d.ts",
-		"./src/service-worker/**/*.d.ts",
-		"./.svelte-kit/**",
-		"./.wrangler/**"
-	]
+	"exclude": ["./node_modules/**", "./.svelte-kit/**", "./.wrangler/**"]
 }

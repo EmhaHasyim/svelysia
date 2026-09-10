@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { api } from '$lib/api/client'
+	import { eden } from '$lib/api/client'
 
 	const stack = [
 		['SvelteKit', 'Application framework', 'Frontend'],
@@ -44,15 +44,13 @@
 		status = 'idle'
 		latency = null
 		const startedAt = performance.now()
-
 		try {
-			const { data, error } = await api.health.get()
-			latency = Math.round(performance.now() - startedAt)
-			status = !error && data.status === 'ok' ? 'success' : 'error'
+			const { data, error } = await eden.api.health.get()
+			status = !error && data?.status === 'ok' ? 'success' : 'error'
 		} catch {
-			latency = Math.round(performance.now() - startedAt)
 			status = 'error'
 		} finally {
+			latency = Math.round(performance.now() - startedAt)
 			loading = false
 		}
 	}
@@ -257,9 +255,9 @@
 						class="overflow-x-auto p-4 font-mono text-[0.8rem] leading-6 text-slate-200 sm:p-5 sm:text-sm"><code><span class="tok-kw">import</span> <span class="tok-fn">&#123; Elysia, t &#125;</span> <span class="tok-kw">from</span> <span class="tok-str">'elysia'</span>
 
 <span class="tok-kw">export const</span> <span class="tok-fn">app</span> = <span class="tok-kw">new</span> <span class="tok-fn">Elysia</span>()
-  .<span class="tok-fn">get</span>(<span class="tok-str">'/health'</span>, () => (&#123; <span class="tok-fn">status</span>: <span class="tok-str">'ok'</span> &#125;), &#123;
+  .<span class="tok-fn">get</span>(<span class="tok-str">'/health'</span>, &#123;
     <span class="tok-fn">response</span>: t.<span class="tok-fn">Object</span>(&#123; <span class="tok-fn">status</span>: t.<span class="tok-fn">Literal</span>(<span class="tok-str">'ok'</span>) &#125;),
-  &#125;)
+  &#125;, () => (&#123; <span class="tok-fn">status</span>: <span class="tok-str">'ok'</span> &#125;))
 
 <span class="tok-cm">// tipe client mengikuti server</span>
 <span class="tok-kw">const</span> &#123; data &#125; = <span class="tok-kw">await</span> <span class="tok-fn">api.health.get</span>()
