@@ -16,22 +16,17 @@
 	let loading = $state(false)
 	let status = $state<'idle' | 'success' | 'error'>('idle')
 	let latency = $state<number | null>(null)
+	// ponytail: the class is the single source of truth — app.html applies it
+	// pre-paint from localStorage / prefers-color-scheme. Read it, don't re-read
+	// storage. A failed setItem costs a non-persisted theme, nothing else.
 	let dark = $state(
 		typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
 	)
 
-	function persistTheme(value: boolean) {
-		try {
-			localStorage.setItem('theme', value ? 'dark' : 'light')
-		} catch (error) {
-			console.warn('Could not persist theme', error)
-		}
-	}
-
 	function toggleTheme() {
 		dark = !dark
 		document.documentElement.classList.toggle('dark', dark)
-		persistTheme(dark)
+		localStorage.setItem('theme', dark ? 'dark' : 'light')
 	}
 
 	function goCheckApi() {
@@ -208,7 +203,7 @@
 						class="group rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5"
 					>
 						<div class="flex items-center justify-between">
-							<span class="font-mono text-xs text-muted-foreground/70"
+							<span class="font-mono text-xs text-muted-foreground"
 								>{String(i + 1).padStart(2, '0')}</span
 							>
 							<span
@@ -254,14 +249,14 @@
 					<pre
 						class="overflow-x-auto p-4 font-mono text-[0.8rem] leading-6 text-slate-200 sm:p-5 sm:text-sm"><code><span class="tok-kw">import</span> <span class="tok-fn">&#123; Elysia, t &#125;</span> <span class="tok-kw">from</span> <span class="tok-str">'elysia'</span>
 
-<span class="tok-kw">export const</span> <span class="tok-fn">app</span> = <span class="tok-kw">new</span> <span class="tok-fn">Elysia</span>()
+<span class="tok-kw">export const</span> <span class="tok-fn">app</span> = <span class="tok-kw">new</span> <span class="tok-fn">Elysia</span>(&#123; prefix: <span class="tok-str">'/api'</span> &#125;)
   .<span class="tok-fn">get</span>(<span class="tok-str">'/health'</span>, &#123;
     <span class="tok-fn">response</span>: t.<span class="tok-fn">Object</span>(&#123; <span class="tok-fn">status</span>: t.<span class="tok-fn">Literal</span>(<span class="tok-str">'ok'</span>) &#125;),
   &#125;, () => (&#123; <span class="tok-fn">status</span>: <span class="tok-str">'ok'</span> &#125;))
 
-<span class="tok-cm">// tipe client mengikuti server</span>
-<span class="tok-kw">const</span> &#123; data &#125; = <span class="tok-kw">await</span> <span class="tok-fn">api.health.get</span>()
-data.<span class="tok-fn">status</span> <span class="tok-cm">// tipe literal 'ok'</span></code></pre>
+<span class="tok-cm">// client types follow the server</span>
+<span class="tok-kw">const</span> &#123; data &#125; = <span class="tok-kw">await</span> <span class="tok-fn">eden.api.health.get</span>()
+data.<span class="tok-fn">status</span> <span class="tok-cm">// literal type 'ok'</span></code></pre>
 				</div>
 			</div>
 		</section>
