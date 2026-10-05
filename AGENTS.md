@@ -45,11 +45,14 @@ Elysia is the single source of truth, mounted at `/api` and forwarded by
 - Secrets/env: Workers bindings only, never inline. After touching `wrangler.jsonc`, run `bun run gen`.
 - Keep the bun pin in sync wherever it appears (`.npmrc`, `package.json`, CI `bun-version`).
   All three currently read 1.4.2.
+- Project name lives in two places and must match: `package.json` `name` and `wrangler.jsonc`
+  `name` (the Worker name, and the `workers.dev` subdomain). Change both on every new site.
 
 ## Don't touch
 
-- `worker-configuration.d.ts` (generated — `bun run gen`), `.svelte-kit/`, `bun.lock`, `.wrangler/`.
-  The generated file stays tracked (`tsconfig.json` references it) but is `-diff` in `.gitattributes`.
+- `worker-configuration.d.ts` (generated, gitignored — `bun run check` and `bun run build` both run
+  `wrangler types` first, so a fresh clone typechecks without a manual `bun run gen`), `.svelte-kit/`,
+  `bun.lock`, `.wrangler/`.
 - `elysia` and `@elysia/eden` are **exact pins** on the 2.0.0 beta line. `2.0.0-beta.19` breaks the
   AOT build with `handler JIT is still reachable`; beta.20 does not. Bump deliberately, then
   `bun run verify`.

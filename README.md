@@ -52,6 +52,17 @@ Preview hasil build:
 bun run preview
 ```
 
+## Deploy
+
+Login Cloudflare sekali, lalu deploy:
+
+```sh
+bunx wrangler login
+bun run deploy
+```
+
+`bun run deploy` menjalankan build lalu `wrangler deploy`, memakai nama Worker dari `wrangler.jsonc`. Endpoint API otomatis tersedia di `https://<nama-worker>.<subdomain>.workers.dev/api`.
+
 ## Validation
 
 Jalankan seluruh quality gate sekaligus:
@@ -62,11 +73,14 @@ bun run verify
 
 ## Mulai project baru
 
-Setelah menyalin atau membuat repository dari template ini:
+Buat repository baru dari template ini lewat tombol **Use this template** di halaman GitHub, lalu:
 
-1. Ubah metadata project di `package.json`.
+1. Ganti `name` di `package.json` dan di `wrangler.jsonc` dengan nama project yang sama. Nilai di `wrangler.jsonc` menjadi nama Worker dan subdomain `workers.dev`.
 2. Ganti halaman utama di `src/routes/+page.svelte`.
 3. Tambahkan endpoint API baru di `src/lib/server/api/index.ts`; semua endpoint API diekspos di bawah prefix `/api`. Client browser type-safe tersedia di `src/lib/api/client.ts` dan mengikuti tipe server otomatis.
-4. Jalankan seluruh validation command.
+4. Jalankan `bun install && bun run verify`.
+5. Kalau site butuh env var, isi `.env` memakai `.env.example` sebagai acuan.
+
+`worker-configuration.d.ts` tidak ikut ter-track; `bun run check` dan `bun run build` menjalankan `wrangler types` sendiri sehingga tipe Workers binding selalu sinkron dengan `wrangler.jsonc`.
 
 API bawaan hanya berisi health check agar template tetap ringan. Persistence, autentikasi, database, dan domain API sengaja tidak disertakan karena berbeda untuk setiap website.
