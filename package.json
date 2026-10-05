@@ -7,6 +7,7 @@
 		"dev": "vite dev",
 		"build": "wrangler types && bunx --bun vite build",
 		"preview": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173",
+		"deploy": "bun run build && wrangler deploy",
 		"prepare": "svelte-kit sync && wrangler types || echo ''",
 		"check": "wrangler types && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
