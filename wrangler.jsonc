@@ -1,5 +1,7 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
+	// Rename to the Worker name on every new site: this becomes the Worker
+	// name, the workers.dev subdomain, and the `*.workers.dev` host.
 	"name": "svelysia",
 	"compatibility_date": "2026-08-28",
 	"compatibility_flags": ["nodejs_als"],
