@@ -4,7 +4,8 @@
 	// name, the workers.dev subdomain, and the `*.workers.dev` host.
 	"name": "svelysia",
 	"compatibility_date": "2026-08-28",
-	"compatibility_flags": ["nodejs_als"],
+	// ponytail: observability ON for prod logs/traces per Workers best practice
+	"observability": { "enabled": true },
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": {
 		"binding": "ASSETS",

@@ -4,13 +4,16 @@
 		"browser": true,
 		"es2022": true,
 		"node": true,
-		"worker": true
+		"worker": true,
+		"svelte": true
 	},
 	"plugins": ["typescript", "import", "unicorn", "vitest"],
 	"overrides": [
 		{
 			"files": ["**/*.{test,spec}.{js,ts,jsx,tsx}", "**/*.svelte.{test,spec}.{js,ts}"],
-			"env": { "vitest": true }
+			"env": {
+				"vitest": true
+			}
 		},
 		{
 			"files": ["**/*.svelte"],
@@ -23,7 +26,17 @@
 		"correctness": "deny",
 		"suspicious": "deny"
 	},
-	"rules": {},
+	"rules": {
+		"typescript/no-explicit-any": "deny",
+		"import/extensions": [
+			"deny",
+			"ignorePackages",
+			{
+				"js": "always",
+				"ts": "always"
+			}
+		]
+	},
 	"ignorePatterns": [
 		"node_modules/**",
 		".svelte-kit/**",

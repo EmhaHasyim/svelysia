@@ -4,4 +4,5 @@
 	let { children } = $props()
 </script>
 
-{@render children()}
+<a href="#main" class="sr-only focus:not-sr-only">Lewati ke konten</a>
+	{@render children()}
