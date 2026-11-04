@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,17 +7,46 @@
 		<link rel="icon" href="/favicon-32x32.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
-		<meta name="theme-color" content="#ec4899" />
+		<meta name="theme-color" content="#14161a" />
+		<meta name="color-scheme" content="dark light" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			.font-mono {
+				font-family: 'JetBrains Mono', ui-monospace, monospace;
+			}
+			body {
+				font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+			}
+			h1,
+			h2,
+			h3,
+			.font-display {
+				font-family: 'JetBrains Mono', ui-monospace, monospace;
+			}
+		</style>
 		<script>
-			try {
-				var t = localStorage.getItem('theme')
-				if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches))
-					document.documentElement.classList.add('dark')
-			} catch (e) {}
+			;(function () {
+				try {
+					var stored = localStorage.getItem('svelysia-theme')
+					if (stored === 'light' || stored === 'dark') {
+						document.documentElement.dataset.theme = stored
+					} else {
+						document.documentElement.dataset.theme = 'dark'
+					}
+				} catch (e) {
+					document.documentElement.dataset.theme = 'dark'
+				}
+			})()
 		</script>
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<body>
+		<!-- ponytail: client fetch on click, no load functions. Ceiling: no SSR data; upgrade: add +page.ts load if SEO needs it. -->
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

@@ -1,37 +1,27 @@
 <script lang="ts">
-	import { eden } from '$lib/api/client'
-
-	const stack = [
-		['SvelteKit', 'Application framework', 'Frontend'],
-		['Svelte 5', 'UI and runes', 'Frontend'],
-		['TypeScript', 'Type safety', 'Language'],
-		['Tailwind CSS', 'Styling system', 'Frontend'],
-		['Elysia', 'API framework', 'Backend'],
-		['Eden Treaty', 'Type-safe client', 'Backend'],
-		['Cloudflare Workers', 'Runtime and deployment', 'Edge'],
-		['Vitest', 'Testing', 'Quality'],
-		['Oxlint + Oxfmt', 'Code quality', 'Quality'],
-	]
+	import { eden } from '#lib/client/client.ts'
 
 	let loading = $state(false)
 	let status = $state<'idle' | 'success' | 'error'>('idle')
 	let latency = $state<number | null>(null)
-	// ponytail: the class is the single source of truth — app.html applies it
-	// pre-paint from localStorage / prefers-color-scheme. Read it, don't re-read
-	// storage. A failed setItem costs a non-persisted theme, nothing else.
-	let dark = $state(
-		typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
-	)
-
-	function toggleTheme() {
-		dark = !dark
-		document.documentElement.classList.toggle('dark', dark)
-		localStorage.setItem('theme', dark ? 'dark' : 'light')
+	let theme = $state<'dark' | 'light'>('dark')
+	{
+		try {
+			const stored = document?.documentElement?.dataset?.theme
+			if (stored === 'light' || stored === 'dark') theme = stored
+		} catch {
+			// ignore
+		}
 	}
 
-	function goCheckApi() {
-		checkApi()
-		document.getElementById('api')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+	function toggleTheme() {
+		theme = theme === 'dark' ? 'light' : 'dark'
+		document.documentElement.dataset.theme = theme
+		try {
+			localStorage.setItem('svelysia-theme', theme)
+		} catch {
+			// ignore
+		}
 	}
 
 	async function checkApi() {
@@ -49,289 +39,239 @@
 			loading = false
 		}
 	}
-
-	const statusDot = $derived(
-		loading
-			? 'bg-primary animate-pulse'
-			: status === 'success'
-				? 'bg-emerald-500'
-				: status === 'error'
-					? 'bg-red-500'
-					: 'bg-muted-foreground/40',
-	)
 </script>
 
 <svelte:head>
-	<title>Svelysia — Minimal web starter</title>
+	<title>Svelysia — Template SvelteKit × Elysia di Cloudflare Workers</title>
 	<meta
 		name="description"
-		content="Svelysia adalah Svelte × Elysia: frontend reaktif Svelte 5 dipadukan dengan API Elysia yang type-safe end-to-end."
+		content="Svelysia adalah template techstack SvelteKit 3, Elysia 2 RC, dan Cloudflare Workers. Clone, jalankan, deploy."
 	/>
 </svelte:head>
 
-<div class="min-h-screen bg-background text-foreground antialiased">
-	<!-- Sticky nav, like svelte.dev / elysiajs.com -->
-	<header class="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
-		<nav
-			class="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
-			aria-label="Navigasi utama"
-		>
-			<a class="flex items-center gap-2 font-semibold tracking-tight" href="#top">
-				<img src="/icon-192.png" alt="Logo Svelysia" width="28" height="28" class="size-7 rounded-md" />
-				Svelysia
+<div style="background: var(--glow), var(--color-bg); color: var(--color-text)" class="min-h-screen">
+	<header class="border-b backdrop-blur-md" style="background: var(--color-glass); border-color: var(--color-border); position: sticky; top: 0; z-index: var(--z-header)">
+		<div class="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
+			<a href="#top" class="flex items-center gap-2 text-base font-semibold">
+				<img src="/icon-192.png" alt="" width="26" height="26" />
+				<span class="font-display">Svelysia</span>
 			</a>
-			<div class="flex items-center gap-3 text-sm text-muted-foreground sm:gap-6">
-				<a class="transition-colors hover:text-foreground" href="#stack">Stack</a>
-				<a class="transition-colors hover:text-foreground" href="#code">Kode</a>
-				<a class="transition-colors hover:text-foreground" href="#api">API</a>
-			</div>
-			<div class="flex items-center gap-2">
-				<span
-					class="hidden rounded-full border border-border px-2.5 py-1 font-mono text-xs text-muted-foreground sm:inline"
-					>v0.0.1</span
+			<div class="flex items-center gap-3">
+				<a
+					href="#mulai"
+					class="text-sm underline-offset-4 hover:underline"
+					style="color: var(--color-text-muted)"
 				>
+					Mulai cepat
+				</a>
 				<button
 					type="button"
 					onclick={toggleTheme}
-					aria-label={dark ? 'Alih ke mode terang' : 'Alih ke mode gelap'}
-					class="grid size-8 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+					class="inline-flex h-7 items-center rounded-md border px-2.5 font-mono text-xs font-semibold uppercase tracking-[var(--tracking-label)]"
+					style="border-color: var(--color-border-strong); color: var(--color-text-muted)"
+					aria-label="Ganti tema" aria-pressed={theme === 'dark'}
 				>
-					{#if dark}
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="size-4"
-							><circle cx="12" cy="12" r="4" /><path
-								d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
-							/></svg
-						>
-					{:else}
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="size-4"
-							><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
-						>
-					{/if}
+					{theme === 'dark' ? 'Dark' : 'Light'}
 				</button>
 			</div>
-		</nav>
+		</div>
 	</header>
 
-	<main id="top" class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-		<!-- Hero -->
-		<section class="mx-auto max-w-4xl py-16 text-center sm:py-24 lg:py-32 2xl:py-40">
-			<a
-				href="#stack"
-				class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+	<main id="top" class="mx-auto w-full max-w-5xl px-4 sm:px-6">
+		<section class="py-20 sm:py-28" aria-labelledby="hero-heading">
+			<p
+				class="font-mono text-xs font-semibold tracking-[var(--tracking-label)] uppercase"
+				style="color: var(--color-primary)"
 			>
-				<span class="size-1.5 rounded-full bg-primary"></span>
-				SvelteKit × Elysia, siap deploy ke edge
-			</a>
+				Template · SvelteKit 3 · Elysia 2 RC · Cloudflare Workers
+			</p>
 			<h1
-				class="mx-auto mt-6 max-w-3xl text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[1.02] tracking-tight"
+				id="hero-heading"
+				class="mt-5 max-w-3xl text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl"
 			>
-				Mulai lebih cepat.<br /><span class="text-gradient">Bangun lebih baik.</span>
+				Stack cepat, dari hari pertama.
 			</h1>
 			<p
-				class="mx-auto mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"
+				class="mt-6 max-w-2xl text-lg leading-8"
+				style="color: var(--color-text-muted)"
 			>
-				Svelysia adalah Svelte × Elysia — frontend reaktif Svelte 5 dipadukan dengan API Elysia
-				yang type-safe end-to-end, siap deploy ke edge dalam satu template minimal.
+				Svelysia adalah techstack template untuk aplikasi web: frontend Svelte, API Elysia,
+				dan Workers di edge. Tipe yang Anda definisikan di server langsung dipakai di frontend
+				lewat Eden Treaty. Mau cepat, bukan aneh-aneh.
 			</p>
-			<div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+			<div class="mt-9 flex flex-wrap items-center gap-4">
 				<button
 					type="button"
-					onclick={goCheckApi}
+					onclick={checkApi}
 					disabled={loading}
-					class="h-12 w-full rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
-				>
-					{loading ? 'Memeriksa API…' : 'Cek API'}
+					class="btn-primary inline-flex h-12 items-center rounded-lg px-6 text-base font-semibold shadow-sm transition duration-75 disabled:opacity-50"
+					>
+					{loading ? 'Menghubungkan…' : 'Tes endpoint live'}
 				</button>
 				<a
-					href="#code"
-					class="inline-flex h-12 w-full items-center justify-center rounded-full border border-border bg-card px-8 text-base font-semibold transition-colors hover:border-accent/60 hover:text-accent sm:w-auto"
+					href="#mulai"
+					class="inline-flex h-12 items-center rounded-lg border px-6 text-base font-medium transition duration-75 hover:opacity-70"
+					style="border-color: var(--color-border-strong); color: var(--color-text)"
 				>
-					Lihat kodenya
+					Lihat cara pakai
 				</a>
 			</div>
-			<p class="mt-5 font-mono text-xs text-muted-foreground">GET /api/health · Eden Treaty</p>
-		</section>
-
-		<!-- Benchmark-style stats, a la Elysia -->
-		<section
-			class="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-border text-center sm:grid-cols-3"
-			aria-label="Sorotan"
-		>
-			<div class="bg-card px-6 py-8 sm:py-10">
-				<p class="font-mono text-4xl font-bold tracking-tight text-primary sm:text-5xl">9</p>
-				<p class="mt-2 text-sm text-muted-foreground">Teknologi dalam satu template</p>
-			</div>
-			<div class="bg-card px-6 py-8 sm:py-10">
-				<p class="font-mono text-4xl font-bold tracking-tight text-primary sm:text-5xl">100%</p>
-				<p class="mt-2 text-sm text-muted-foreground">Type-safe client → server via Eden Treaty</p>
-			</div>
-			<div class="bg-card px-6 py-8 sm:py-10">
-				<p class="font-mono text-4xl font-bold tracking-tight text-primary sm:text-5xl">1</p>
-				<p class="mt-2 text-sm text-muted-foreground">
-					Perintah verifikasi: <code class="font-mono text-xs">bun run verify</code>
-				</p>
-			</div>
-		</section>
-
-		<!-- Feature cards, a la Svelte -->
-		<section id="stack" class="scroll-mt-20 py-16 sm:py-24">
-			<p class="text-center text-xs font-medium uppercase tracking-[0.2em] text-primary">Stack</p>
-			<h2
-				class="mx-auto mt-3 max-w-2xl text-center text-3xl font-bold tracking-tight sm:text-4xl 2xl:text-5xl"
+			<code
+				class="mt-8 inline-block rounded-lg border px-4 py-3 font-mono text-sm"
+				style="background: var(--color-terminal-bg); color: var(--color-terminal-fg); border-color: var(--color-border)"
 			>
-				Fondasi siap pakai, tanpa boilerplate.
+				git clone svelysia && bun install && bun dev
+			</code>
+
+			<div
+				class="mt-10 max-w-2xl overflow-hidden rounded-xl border text-left backdrop-blur-xl shadow-[var(--shadow-glass)]"
+				style="background: var(--color-terminal-bg); color: var(--color-terminal-fg); border-color: var(--color-border)"
+				aria-live="polite"
+			>
+				<div
+					class="flex items-center justify-between border-b px-5 py-3.5"
+					style="border-color: var(--color-border)"
+				>
+					<span class="flex items-center gap-3 text-sm">
+						<span class="font-mono font-semibold" style="color: var(--color-primary)">GET</span>
+						<span class="font-mono">/api/health</span>
+					</span>
+					<span class="flex items-center gap-2 text-sm" style="color: var(--color-text-muted)">
+						<span
+							class="size-2.5 rounded-full {loading
+								? 'bg-[var(--color-warn)]'
+								: status === 'success'
+									? 'bg-[var(--color-accent)]'
+									: status === 'error'
+										? 'bg-[var(--color-danger)]'
+										: 'bg-[var(--color-idle)]'}"
+						></span>
+						{loading ? 'Memeriksa…' : status === 'success' ? `Terhubung · ${latency}ms` : status === 'error' ? 'Gagal' : 'Belum dites'}
+					</span>
+				</div>
+				<pre
+					class="overflow-x-auto px-5 py-4 font-mono text-sm leading-6">GET /api/health memeriksa bahwa server, API, dan edge sudah terhubung.
+Klik "Tes endpoint live" untuk memanggil endpoint asli dari browser ini.</pre>
+			</div>
+		</section>
+
+		<section
+			aria-label="Kecepatan stack"
+			class="border-t py-16 sm:py-20"
+			style="border-color: var(--color-border)"
+		>
+			<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">
+				Kecepatan itu fitur, bukan hiasan.
 			</h2>
-			<div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each stack as [name, description, tag], i}
-					<article
-						class="group rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5"
-					>
-						<div class="flex items-center justify-between">
-							<span class="font-mono text-xs text-muted-foreground"
-								>{String(i + 1).padStart(2, '0')}</span
-							>
-							<span
-								class="rounded-full bg-muted px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground"
-								>{tag}</span
-							>
-						</div>
-						<h3 class="mt-4 text-lg font-semibold tracking-tight">{name}</h3>
-						<p class="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
-					</article>
-				{/each}
-			</div>
+			<p class="mt-5 max-w-2xl text-base leading-7" style="color: var(--color-text-muted)">
+				Elysia dibangun di atas Bun dan Web Standard. Di benchmark TechEmpower, ia mencatatkan
+				angka jauh di atas Express dan Fastify — bukan janji, ada angkanya.
+			</p>
+			<ul class="mt-10 grid gap-6 sm:grid-cols-3">
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-display text-4xl font-bold tracking-tight" style="color: var(--color-primary)">21×</p>
+					<p class="mt-2 text-sm leading-6" style="color: var(--color-text-muted)">lebih cepat dari Express di TechEmpower PlainText</p>
+				</li>
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-display text-4xl font-bold tracking-tight" style="color: var(--color-primary)">6×</p>
+					<p class="mt-2 text-sm leading-6" style="color: var(--color-text-muted)">lebih cepat dari Fastify, dalam benchmark yang sama</p>
+				</li>
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-display text-4xl font-bold tracking-tight" style="color: var(--color-primary)">0</p>
+					<p class="mt-2 text-sm leading-6" style="color: var(--color-text-muted)">server yang harus Anda rawat — semua berjalan di edge</p>
+				</li>
+			</ul>
 		</section>
 
-		<!-- Code showcase, a la Elysia docs -->
-		<section id="code" class="scroll-mt-20 pb-16 sm:pb-24">
-			<div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-				<div class="text-center lg:text-left">
-					<p class="text-xs font-medium uppercase tracking-[0.2em] text-primary">Single source of truth</p>
-					<h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl 2xl:text-5xl">
-						Satu skema, <span class="text-gradient">semua sinkron.</span>
-					</h2>
-					<p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-						Skema Elysia memvalidasi request saat runtime dan memberi tipe yang sama ke handler
-						maupun client Eden Treaty. Ubah satu tempat, seluruh aplikasi ikut — tanpa codegen.
+		<section
+			aria-label="Arsitektur"
+			class="border-t py-16 sm:py-20"
+			style="border-color: var(--color-border)"
+		>
+			<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Satu definisi untuk semua lapisan.</h2>
+			<p class="mt-5 max-w-2xl text-base leading-7" style="color: var(--color-text-muted)">
+				Skema adalah satu-satunya sumber kebenaran. Ia menjaga request di runtime, memberi
+				tipe di frontend, dan menghasilkan dokumentasi OpenAPI — dari definisi yang sama.
+			</p>
+			<div class="mt-10 grid gap-10 lg:grid-cols-2">
+				<div>
+					<h3 class="text-xl font-semibold">Validasi runtime memakai skema yang sama</h3>
+					<p class="mt-3 text-base leading-7" style="color: var(--color-text-muted)">
+						Declare route sekali di Elysia dengan <span class="font-mono text-sm px-1.5 py-0.5 rounded" style="background: var(--color-surface-raised)">t.*</span>.
+						Request yang tidak cocok ditolak sebelum menyentuh handler Anda. Tanpa
+						validasi terpisah.
 					</p>
-					<button
-						type="button"
-						onclick={goCheckApi}
-						disabled={loading}
-						class="mt-6 inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50"
-					>
-						{loading ? 'Memeriksa…' : 'Coba endpoint live'}
-					</button>
+					<h3 class="mt-8 text-xl font-semibold">Tipe mengalir ke frontend</h3>
+					<p class="mt-3 text-base leading-7" style="color: var(--color-text-muted)">
+						Eden Treaty membaca tipe langsung dari definisi server. Ubah API, frontend
+						ikut berubah — compile-time error kalau tidak cocok. Tanpa code generation.
+					</p>
+					<h3 class="mt-8 text-xl font-semibold">Docs otomatis</h3>
+					<p class="mt-3 text-base leading-7" style="color: var(--color-text-muted)">
+						OpenAPI dihasilkan dari skema yang sama, tersedia di
+						<span class="font-mono text-sm px-1.5 py-0.5 rounded" style="background: var(--color-surface-raised)">/api/openapi</span>.
+						Tidak ada file docs yang basi.
+					</p>
 				</div>
-				<div class="code-card overflow-hidden rounded-2xl shadow-2xl">
-					<div class="flex items-center gap-1.5 border-b border-white/10 px-4 py-3">
-						<span class="size-2.5 rounded-full bg-[#ff5f57]"></span>
-						<span class="size-2.5 rounded-full bg-[#febc2e]"></span>
-						<span class="size-2.5 rounded-full bg-[#28c840]"></span>
-						<span class="ml-2 font-mono text-xs text-slate-400">server/api/index.ts</span>
-					</div>
+				<div
+					class="overflow-hidden rounded-xl border backdrop-blur-xl"
+					style="background: var(--color-terminal-bg); color: var(--color-terminal-fg); border-color: var(--color-border)"
+				>
 					<pre
-						class="overflow-x-auto p-4 font-mono text-[0.8rem] leading-6 text-slate-200 sm:p-5 sm:text-sm"><code><span class="tok-kw">import</span> <span class="tok-fn">&#123; Elysia, t &#125;</span> <span class="tok-kw">from</span> <span class="tok-str">'elysia'</span>
+						class="overflow-x-auto p-6 font-mono text-sm leading-6"><code>.get('/health', &#123; response: t.Object(&#123; status: t.Literal('ok') &#125;) &#125;, () =&gt; (&#123; status: 'ok' &#125;))
 
-<span class="tok-kw">export const</span> <span class="tok-fn">app</span> = <span class="tok-kw">new</span> <span class="tok-fn">Elysia</span>(&#123; prefix: <span class="tok-str">'/api'</span> &#125;)
-  .<span class="tok-fn">get</span>(<span class="tok-str">'/health'</span>, &#123;
-    <span class="tok-fn">response</span>: t.<span class="tok-fn">Object</span>(&#123; <span class="tok-fn">status</span>: t.<span class="tok-fn">Literal</span>(<span class="tok-str">'ok'</span>) &#125;),
-  &#125;, () => (&#123; <span class="tok-fn">status</span>: <span class="tok-str">'ok'</span> &#125;))
-
-<span class="tok-cm">// client types follow the server</span>
-<span class="tok-kw">const</span> &#123; data &#125; = <span class="tok-kw">await</span> <span class="tok-fn">eden.api.health.get</span>()
-data.<span class="tok-fn">status</span> <span class="tok-cm">// literal type 'ok'</span></code></pre>
+// Frontend — types come from App, not manual copies
+const &#123; data &#125; = await eden.api.health.get()</code></pre>
 				</div>
 			</div>
 		</section>
 
-		<!-- API status -->
-		<section id="api" class="scroll-mt-20 pb-16 sm:pb-24">
-			<div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
-				<div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-					<div>
-						<p class="text-xs font-medium uppercase tracking-[0.2em] text-primary">Live check</p>
-						<h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">API health</h2>
-						<p class="mt-1 font-mono text-sm text-muted-foreground">
-							<span class="rounded bg-muted px-1.5 py-0.5 font-semibold text-emerald-700 dark:text-emerald-400">GET</span>
-							/api/health · Elysia
-						</p>
-					</div>
-					<div class="flex items-center gap-4">
-						<div class="text-left sm:text-right">
-							{#if latency !== null}
-								<p class="font-mono text-4xl font-bold tracking-tight">
-									{latency}<span class="ml-1 text-base font-normal text-muted-foreground">ms</span>
-								</p>
-								<p
-									class={status === 'success'
-										? 'text-sm text-emerald-700 dark:text-emerald-400'
-										: 'text-sm text-red-600 dark:text-red-400'}
-								>
-									{status === 'success' ? 'Beroperasi' : 'Tidak tersedia'}
-								</p>
-							{:else}
-								<p class="font-mono text-4xl font-bold tracking-tight text-muted-foreground">—</p>
-								<p class="text-sm text-muted-foreground">Belum dicek</p>
-							{/if}
-						</div>
-						<span class="size-3 shrink-0 rounded-full {statusDot}"></span>
-					</div>
-				</div>
-			</div>
+		<section
+			id="mulai"
+			aria-label="Mulai cepat"
+			class="border-t py-16 sm:py-20"
+			style="border-color: var(--color-border)"
+		>
+			<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Mulai dalam tiga langkah.</h2>
+			<ol class="mt-10 grid gap-6 sm:grid-cols-3">
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-mono text-sm font-semibold" style="color: var(--color-primary)">01</p>
+					<h3 class="mt-3 font-semibold">Clone dan jalankan</h3>
+					<code class="mt-3 block rounded-md px-3 py-2 font-mono text-sm" style="background: var(--color-surface-raised)">bun dev</code>
+					<p class="mt-3 text-sm leading-6" style="color: var(--color-text-muted)">
+						Buka halaman, klik Tes endpoint live, pastikan stack hidup.
+					</p>
+				</li>
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-mono text-sm font-semibold" style="color: var(--color-primary)">02</p>
+					<h3 class="mt-3 font-semibold">Tambah route di satu tempat</h3>
+					<code class="mt-3 block rounded-md px-3 py-2 font-mono text-sm" style="background: var(--color-surface-raised)">src/lib/server/api/index.ts</code>
+					<p class="mt-3 text-sm leading-6" style="color: var(--color-text-muted)">
+						Tulis route dengan validasi. Frontend langsung dapat tipenya, docs ikut update.
+					</p>
+				</li>
+				<li class="rounded-xl border p-6 backdrop-blur-md shadow-sm" style="background: var(--color-glass); box-shadow: var(--shadow-glass); border-color: var(--color-glass-border)">
+					<p class="font-mono text-sm font-semibold" style="color: var(--color-primary)">03</p>
+					<h3 class="mt-3 font-semibold">Verifikasi, lalu deploy</h3>
+					<code class="mt-3 block rounded-md px-3 py-2 font-mono text-sm" style="background: var(--color-surface-raised)">bun run verify && bun run deploy</code>
+					<p class="mt-3 text-sm leading-6" style="color: var(--color-text-muted)">
+						Gate yang sama dengan CI. Lolos berarti siap rilis di edge.
+					</p>
+				</li>
+			</ol>
 		</section>
 	</main>
 
-	<footer class="border-t border-border">
-		<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-			<div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-				<div class="max-w-xs">
-					<a href="#top" class="flex items-center gap-2 font-semibold tracking-tight text-foreground">
-						<img src="/icon-192.png" alt="Logo Svelysia" width="28" height="28" class="size-7 rounded-md" />
-						Svelysia
-					</a>
-					<p class="mt-3 text-sm leading-6 text-muted-foreground">
-						Bersih sejak awal. Fleksibel untuk berkembang.
-					</p>
-				</div>
-				<nav class="flex gap-12 text-sm" aria-label="Navigasi footer">
-					<div class="flex flex-col gap-2.5">
-						<p class="font-semibold text-foreground">Jelajah</p>
-						<a class="text-muted-foreground transition-colors hover:text-foreground" href="#stack">Stack</a>
-						<a class="text-muted-foreground transition-colors hover:text-foreground" href="#code">Kode</a>
-						<a class="text-muted-foreground transition-colors hover:text-foreground" href="#api">API</a>
-					</div>
-					<div class="flex flex-col gap-2.5">
-						<p class="font-semibold text-foreground">Mulai</p>
-						<a class="text-muted-foreground transition-colors hover:text-foreground" href="#code">Lihat kodenya</a>
-						<a class="text-muted-foreground transition-colors hover:text-foreground" href="#api">Cek API live</a>
-					</div>
-				</nav>
-			</div>
-			<div
-				class="mt-8 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row"
-			>
-				<p>© 2026 Svelysia · <span class="font-mono text-xs">v0.0.1</span></p>
-				<p class="flex items-center gap-1.5">
-					<span class="size-1.5 rounded-full bg-emerald-500"></span>Siap deploy ke edge
-				</p>
-			</div>
+	<footer class="border-t" style="border-color: var(--color-border)">
+		<div
+			class="mx-auto flex w-full max-w-5xl flex-col items-start justify-between gap-2 px-4 py-8 text-sm sm:flex-row sm:items-center sm:px-6"
+			style="color: var(--color-text-muted)"
+		>
+			<p class="flex items-center gap-2">
+				<img src="/icon-192.png" alt="" width="20" height="20" />
+				Svelysia · v0.0.1
+			</p>
+			<p>SvelteKit 3 · Elysia 2 RC · Eden Treaty · Cloudflare Workers · Bun 1.4.4</p>
 		</div>
 	</footer>
 </div>

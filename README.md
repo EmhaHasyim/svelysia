@@ -4,10 +4,10 @@ Svelysia adalah template starter minimal untuk membangun website baru tanpa meng
 
 ## Tech stack
 
-- SvelteKit 2 dengan Svelte 5 runes
+- SvelteKit 3 dengan Svelte 5 runes
 - TypeScript strict
 - Cloudflare Workers melalui `@sveltejs/adapter-cloudflare`
-- Elysia 2 beta untuk API
+- Elysia 2 RC untuk API
 - Eden Treaty untuk client API type-safe
 - Tailwind CSS 4
 - Vitest untuk server tests
@@ -77,7 +77,7 @@ Buat repository baru dari template ini lewat tombol **Use this template** di hal
 
 1. Ganti `name` di `package.json` dan di `wrangler.jsonc` dengan nama project yang sama. Nilai di `wrangler.jsonc` menjadi nama Worker dan subdomain `workers.dev`.
 2. Ganti halaman utama di `src/routes/+page.svelte`.
-3. Tambahkan endpoint API baru di `src/lib/server/api/index.ts`; semua endpoint API diekspos di bawah prefix `/api`. Client browser type-safe tersedia di `src/lib/api/client.ts` dan mengikuti tipe server otomatis.
+3. Tambahkan endpoint API baru di `src/lib/server/api/index.ts`; semua endpoint API diekspos di bawah prefix `/api`. Client browser type-safe tersedia di `src/lib/client/client.ts` dan mengikuti tipe server otomatis.
 4. Jalankan `bun install && bun run verify`.
 5. Kalau site butuh env var, isi `.env` memakai `.env.example` sebagai acuan.
 

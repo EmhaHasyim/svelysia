@@ -30,7 +30,12 @@ worker-configuration.d.ts
 
 # Tool-local state
 .freebuff/
+.elysia/
+.tmp-als/
 
 # Editor (keep shared extensions, ignore personal settings)
 .vscode/*
 !.vscode/extensions.json
+
+# Orca / inspection screenshots
+.shots/
