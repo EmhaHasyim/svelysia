@@ -77,7 +77,7 @@
 		</div>
 	</header>
 
-	<main id="top" class="mx-auto w-full max-w-5xl px-4 sm:px-6">
+	<main id="main" class="mx-auto w-full max-w-5xl px-4 sm:px-6">
 		<section class="py-20 sm:py-28" aria-labelledby="hero-heading">
 			<p
 				class="font-mono text-xs font-semibold tracking-[var(--tracking-label)] uppercase"

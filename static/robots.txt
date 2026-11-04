@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: /sitemap.xml
+Sitemap: https://svelysia.workers.dev/sitemap.xml

@@ -7,7 +7,7 @@
 </svelte:head>
 
 <div class="min-h-screen" style="background: var(--color-bg); color: var(--color-text)">
-	<main class="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-4 text-center sm:px-6">
+	<main id="main" class="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-4 text-center sm:px-6">
 		<p class="font-mono text-sm" style="color: var(--color-text-muted)">{page.status}</p>
 		<h1 class="mt-4 text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[1.02] tracking-tight">
 			{#if page.status === 404}

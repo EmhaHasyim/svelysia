@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@elysia/eden": "2.0.0-rc.1",
-		"@elysia/openapi": "2.0.0-rc.0",
+		"@elysia/openapi": "2.0.0-rc.1",
 		"elysia": "2.0.0-rc.1"
 	},
 	"devDependencies": {

@@ -50,7 +50,7 @@ Elysia is the single source of truth, mounted at `/api` and forwarded by
   Trivial one-liners need no test.
 - TypeScript 6, strict. No `any` unless a comment says why. Comments in English only.
 - Imports from `src/lib` go through the `#lib` alias declared in `package.json` `imports` (SvelteKit 3
-  removed `$lib`). Specifiers need a **file extension** — `#lib/api/client.ts`, not `#lib/api/client` —
+  removed `$lib`). Specifiers need a **file extension** — `#lib/client/client.ts`, not `#lib/api/client` —
   because `imports` resolution does no extension guessing and no directory-index fallback, so a
   directory module is written `#lib/server/api/index.ts`.
 - `oxfmt` does **not** format `.svelte` files. Hand-match `<script>` blocks to `.oxfmtrc.json`:
