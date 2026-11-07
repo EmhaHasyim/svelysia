@@ -12,7 +12,7 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap"
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
 			rel="stylesheet"
 		/>
 		<style>
@@ -20,17 +20,31 @@
 				font-family: 'JetBrains Mono', ui-monospace, monospace;
 			}
 			body {
-				font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+				font-family:
+					'Space Grotesk', 'JetBrains Mono', system-ui, -apple-system, 'Segoe UI', sans-serif;
 			}
 			h1,
 			h2,
 			h3,
 			.font-display {
-				font-family: 'JetBrains Mono', ui-monospace, monospace;
+				font-family: 'Space Grotesk', 'JetBrains Mono', ui-monospace, monospace;
+			}
+			* {
+				scroll-behavior: smooth;
+			}
+			@media (prefers-reduced-motion: reduce) {
+				* {
+					scroll-behavior: auto !important;
+					animation-duration: 0.01ms !important;
+					transition-duration: 0.01ms !important;
+				}
 			}
 		</style>
 		<script>
 			;(function () {
+				try {
+					document.documentElement.classList.add('js')
+				} catch (e) {}
 				try {
 					var stored = localStorage.getItem('svelysia-theme')
 					if (stored === 'light' || stored === 'dark') {

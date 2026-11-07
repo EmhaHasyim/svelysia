@@ -25,22 +25,22 @@
 	"dependencies": {
 		"@elysia/eden": "2.0.0-rc.1",
 		"@elysia/openapi": "2.0.0-rc.1",
-		"elysia": "2.0.0-rc.1"
+		"elysia": "2.0.0-rc.3"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-cloudflare": "^8.0.2",
 		"@sveltejs/kit": "^3.1.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
-		"@tailwindcss/vite": "^4.3.4",
-		"oxfmt": "^0.76.0",
-		"oxlint": "^1.91.0",
+		"@tailwindcss/vite": "^4.3.5",
+		"oxfmt": "^0.77.0",
+		"oxlint": "^1.92.0",
 		"svelte": "^5.57.3",
 		"svelte-check": "^4.7.8",
-		"tailwindcss": "^4.3.4",
+		"tailwindcss": "^4.3.5",
 		"typescript": "6",
-		"vite": "^8.3.5",
+		"vite": "^8.3.6",
 		"vitest": "^5.1.0",
-		"wrangler": "^4.157.0"
+		"wrangler": "^4.158.0"
 	},
 	"packageManager": "bun@1.4.4"
 }
