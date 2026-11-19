@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import pkg from '../../../../package.json' with { type: 'json' }
 import { fallback } from './+server.ts'
 
 describe('API route boundary', () => {
@@ -6,7 +7,13 @@ describe('API route boundary', () => {
 		const response = await fallback({ request: new Request('http://localhost/api/health') })
 
 		expect(response.status).toBe(200)
-		expect(await response.json()).toEqual({ status: 'ok', version: '0.0.1' })
+		const body = (await response.json()) as { status: string; version: string }
+		expect(body.status).toBe('ok')
+		expect(body.version).toBe(pkg.version)
+		// Security headers set by onAfterHandle must survive on dynamic responses.
+		expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
+		expect(response.headers.get('X-Frame-Options')).toBe('DENY')
+		expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin')
 	})
 
 	test('returns RFC 9457 Problem Details for an unknown API endpoint', async () => {
