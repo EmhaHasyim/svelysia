@@ -9,7 +9,7 @@ import { aot } from 'elysia/plugin/aot/vite'
 // environments: the client build never imports the server API, and the plugin's
 // `buildEnd` throws when its entry misses the module graph.
 const elysiaAot = {
-	...aot('src/lib/server/api/index.ts', { target: 'workerd' }),
+	...aot('src/lib/server/api/index.ts', { target: 'workerd', strip: false }),
 	applyToEnvironment: (environment: { name: string }) => environment.name !== 'client',
 }
 
